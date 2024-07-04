@@ -1,35 +1,34 @@
-﻿using ListedCompany.Services.Repository.UnitOfWork;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace ListedCompany.Services.Repository;
 
 /// <summary>
-///
+///A generic repository class for handling CRUD operations with Entity Framework
 /// </summary>
 /// <typeparam name="TEntity">The type of the entity.</typeparam>
-/// <seealso cref="Sample.Repository.Interface.IGenericRepository{TEntity}" />
+/// <seealso cref="Repository.Interface.IGenericRepository{TEntity}" />
 public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
 {
     /// <summary>
-    /// UnitOfWork 實體
+    /// The DbContext instance.
     /// </summary>
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly DbContext _context;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GenericRepository{TEntity}"/> class.
     /// </summary>
-    /// <param name="unitofwork">The unitofwork.</param>
-    public GenericRepository(IUnitOfWork unitofwork)
+    /// <param name="context">The DbContext instance.</param>
+    public GenericRepository(DbContext context)
     {
-        this._unitOfWork = unitofwork;
+        _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
     /// <summary>
     /// 新增
     /// </summary>
     /// <param name="entity">實體</param>
-    /// <exception cref="ArgumentNullException">entity</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the entity is null</exception>
     public void Add(TEntity entity)
     {
         if (entity == null)
@@ -37,7 +36,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
             throw new ArgumentNullException(nameof(entity));
         }
 
-        _unitOfWork.Context.Set<TEntity>().Add(entity);
+        _context.Set<TEntity>().Add(entity);
     }
 
     /// <summary>
@@ -46,7 +45,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     /// <returns></returns>
     public async Task<IEnumerable<TEntity>> GetAllAsync()
     {
-        return await this._unitOfWork.Context.Set<TEntity>().ToListAsync();
+        return await _context.Set<TEntity>().ToListAsync();
     }
 
     /// <summary>
@@ -56,7 +55,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     /// <returns></returns>
     public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate)
     {
-        return await this._unitOfWork.Context.Set<TEntity>().FirstOrDefaultAsync(predicate);
+        return await _context.Set<TEntity>().FirstOrDefaultAsync(predicate);
     }
 
     /// <summary>
@@ -71,7 +70,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
             throw new ArgumentNullException(nameof(entity));
         }
 
-        this._unitOfWork.Context.Entry(entity).State = EntityState.Deleted;
+        _context.Entry(entity).State = EntityState.Deleted;
     }
 
     /// <summary>
@@ -86,6 +85,6 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
             throw new ArgumentNullException(nameof(entity));
         }
 
-        this._unitOfWork.Context.Entry(entity).State = EntityState.Modified;
+        _context.Entry(entity).State = EntityState.Modified;
     }
 }

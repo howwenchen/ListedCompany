@@ -10,7 +10,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
     /// <summary>
     /// 新增一筆資料
     /// </summary>
-    /// <param name="entity">要新增到的Entity</param>
+    /// <param name="entity">要新增的Entity</param>
     void Add(TEntity entity);
 
     /// <summary>

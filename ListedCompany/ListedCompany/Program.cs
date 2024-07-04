@@ -1,3 +1,6 @@
+using ListedCompany.Services.Repository;
+using ListedCompany.Services.Repository.UnitOfWork;
+
 namespace ListedCompany;
 
 
@@ -8,11 +11,21 @@ namespace ListedCompany;
             var builder = WebApplication.CreateBuilder(args);
             var ConnectionString = builder.Configuration.GetConnectionString("Projcet");
 
-            // Add DI services to the container.
+            // Add services to the DI container.
 
+            // 註冊 DbContext
             //builder.Services.AddDbContext<>(options =>
             //    options.UseSqlServer(ConnectionString));
-            //builder.Services.AddAutoMapper();
+
+            //AutoMapper會返回當前應用程式域中加載的所有程式集
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            // 註冊 UnitOfWork
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // 註冊所有的 Repository
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

@@ -1,44 +1,39 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
+using System.Collections;
 
 namespace ListedCompany.Services.Repository.UnitOfWork;
 
 /// <summary>
-/// UnitOfWork
+/// 實作Entity Framework Unit Of Work的class
 /// </summary>
 public class UnitOfWork : IUnitOfWork
 {
-    /// <summary>
-    ///
-    /// </summary>
-    private bool disposed = false;
-    public IGenericRepository<MON_REV> MON_REVRepository { get; private set; }
-
+    private readonly DbContext _context;
+    private readonly IServiceProvider _serviceProvider;
+    private bool _disposed;
+    private Hashtable _repositories;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UnitOfWork"/> class.
+    /// 設定此Unit of work(UOF)的Context和ServiceProvider
     /// </summary>
-    /// <param name="context">The context.</param>
-    /// <param name="MON_REVRepository">The MON_REV repository.</param>
-    public UnitOfWork(
-    DbContext context,
-        IGenericRepository<MON_REV> MON_REVRepository)
+    /// <param name="context">設定UOF的context</param>
+    /// <param name="serviceProvider">ServiceProvider 用來解析Repository實例</param>
+    public UnitOfWork(DbContext context, IServiceProvider serviceProvider)
     {
-        this.Context = context;
-        this.MON_REVRepository = MON_REVRepository;
+        _context = context;
+        _serviceProvider = serviceProvider;
     }
 
     /// <summary>
+    /// 儲存所有異動
     /// </summary>
-    
+    public void Save()
+    {
+        _context.SaveChanges();
+    }
 
     /// <summary>
-    /// Context
-    /// </summary>
-    public DbContext Context { get; private set; }
-
-    /// <summary>
-    /// Dispose
+    /// 清除此Class的資源
     /// </summary>
     public void Dispose()
     {
@@ -47,28 +42,48 @@ public class UnitOfWork : IUnitOfWork
     }
 
     /// <summary>
-    /// SaveChange
+    /// 清除此Class的資源
     /// </summary>
-    /// <returns></returns>
-    public async Task<int> SaveChangeAsync()
-    {
-        return await this.Context.SaveChangesAsync();
-    }
-
-    /// <summary>
-    /// Dispose
-    /// </summary>
-    /// <param name="disposing"></param>
+    /// <param name="disposing">是否在清理中？</param>
     protected virtual void Dispose(bool disposing)
     {
-        if (!this.disposed)
+        if (!_disposed)
         {
             if (disposing)
             {
-                this.Context.Dispose();
-                this.Context = null;
+                _context.Dispose();
             }
         }
-        this.disposed = true;
+
+        _disposed = true;
+    }
+
+    /// <summary>
+    /// 取得某一個Entity的Repository
+    /// 如果沒有取過，會initialize一個
+    /// 如果有就取得之前initialize的Repository
+    /// </summary>
+    /// <typeparam name="T">此Context裡面的Entity Type</typeparam>
+    /// <returns>Entity的Repository</returns>
+    public IGenericRepository<T> Repository<T>() where T : class
+    {
+        //if null new a hashtable
+        _repositories ??= new Hashtable();
+
+        var type = typeof(T).Name;
+
+        if (!_repositories.ContainsKey(type))
+        {
+            var repositoryInstance = _serviceProvider.GetService(typeof(IGenericRepository<T>));
+            if (repositoryInstance == null)
+            {
+                var repositoryType = typeof(GenericRepository<>).MakeGenericType(typeof(T));
+                repositoryInstance = Activator.CreateInstance(repositoryType, _context);
+            }
+
+            _repositories.Add(type, repositoryInstance);
+        }
+
+        return (IGenericRepository<T>)_repositories[type];
     }
 }

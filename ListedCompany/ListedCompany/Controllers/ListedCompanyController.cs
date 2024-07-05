@@ -1,15 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ListedCompany.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace ListedCompany.Controllers;
 
-[Route("[controller]")]
+
+[Route("[controller]/[action]")]
 [ApiController]
 public class ListedCompanyController : ControllerBase
 {
     
     [HttpGet]
-    public IEnumerable<string> Get()
+    public IEnumerable<string> Get(MonRevenueViewModel viewModel)
     {
         return new string[] { "value1", "value2" };
     }
@@ -28,13 +30,13 @@ public class ListedCompanyController : ControllerBase
     }
 
     
-    [HttpPatch("{id}")]
-    public void Put(int id, [FromBody] string value)
+    [HttpPatch]
+    public void Patch(int id, [FromBody] string value)
     {
     }
 
     
-    [HttpDelete("{id}")]
+    [HttpDelete]
     public void Delete(int id)
     {
     }

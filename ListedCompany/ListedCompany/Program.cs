@@ -39,6 +39,9 @@ namespace ListedCompany;
                 app.UseSwaggerUI();
             }
 
+            //啟用靜態檔案的存取
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

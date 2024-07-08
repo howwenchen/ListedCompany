@@ -1,4 +1,5 @@
-﻿using ListedCompany.ViewModels;
+﻿using ListedCompany.Services.Repository.UnitOfWork;
+using ListedCompany.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -7,13 +8,20 @@ namespace ListedCompany.Controllers;
 
 [Route("[controller]/[action]")]
 [ApiController]
-public class ListedCompanyController : ControllerBase
+public class MonthlyRevenueController : ControllerBase
 {
-    
-    [HttpGet]
-    public IEnumerable<string> Get(MonRevenueViewModel viewModel)
+    private readonly IUnitOfWork _unitOfWork;
+
+    public MonthlyRevenueController(IUnitOfWork unitOfWork)
     {
-        return new string[] { "value1", "value2" };
+        _unitOfWork = unitOfWork;
+    }
+
+    [HttpGet]
+    public IEnumerable<MonRevenueViewModel> Get()
+    {
+
+        return 
     }
 
     

@@ -8,8 +8,8 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<MonRevenue, MonRevenueViewModel> ();
-        CreateMap<CompanyData, MonRevenueViewModel>();
+        CreateMap<MonRevenue, MonRevenueViewModel> ().ReverseMap();
+        CreateMap<CompanyData, MonRevenueViewModel>().ReverseMap();
 
 
 

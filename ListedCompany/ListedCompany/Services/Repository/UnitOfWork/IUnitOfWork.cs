@@ -1,16 +1,14 @@
-﻿namespace ListedCompany.Services.Repository.UnitOfWork;
-
-public interface IUnitOfWork : IDisposable
+﻿namespace ListedCompany.Services.Repository.UnitOfWork
 {
     /// <summary>
-    /// 實作Unit Of Work的interface
+    /// Interface for Unit Of Work
     /// </summary>
     public interface IUnitOfWork : IDisposable
     {
         /// <summary>
         /// 儲存所有異動。
         /// </summary>
-        void Save();
+        Task SaveAsync();
 
         /// <summary>
         /// 取得某一個Entity的Repository

@@ -1,33 +1,33 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
 
-namespace ListedCompany.Services.DatabaseHelper;
-
-/// <summary>
-/// DatabaseHelper
-/// </summary>
-/// <seealso cref="Repository.Infrastructure.IDatabaseHelper" />
-public class DatabaseHelper : IDatabaseHelper
+namespace ListedCompany.Services.DatabaseHelper
 {
-    private readonly string _connectionString;
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="DatabaseHelper"/> class.
+    /// DatabaseHelper
     /// </summary>
-    /// <param name="connectionString">The database.</param>
-    public DatabaseHelper(string connectionString)
+    public class DatabaseHelper : IDatabaseHelper
     {
-        this._connectionString = connectionString;
-    }
+        private readonly string _connectionString;
 
-    /// <summary>
-    /// 取得連線
-    /// </summary>
-    /// <returns></returns>
-    public IDbConnection GetConnection()
-    {
-        var conn = new SqlConnection(this._connectionString);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseHelper"/> class.
+        /// </summary>
+        /// <param name="connectionString">The database connection string.</param>
+        public DatabaseHelper(string connectionString)
+        {
+            _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+        }
 
-        return conn;
+        /// <summary>
+        /// 取得連線
+        /// </summary>
+        /// <returns>開啟的資料庫連線</returns>
+        public IDbConnection GetConnection()
+        {
+            var conn = new SqlConnection(_connectionString);
+            conn.Open();
+            return conn;
+        }
     }
 }

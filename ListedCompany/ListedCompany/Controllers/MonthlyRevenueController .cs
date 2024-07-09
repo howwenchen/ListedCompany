@@ -21,7 +21,7 @@ public class MonthlyRevenueController : ControllerBase
     public IEnumerable<MonRevenueViewModel> Get()
     {
 
-        return 
+        return;
     }
 
     

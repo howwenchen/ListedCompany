@@ -11,6 +11,8 @@ namespace ListedCompany
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // 設定資料庫連線
             var connectionString = builder.Configuration.GetConnectionString("Project");
 
             // Add services to the DI container.

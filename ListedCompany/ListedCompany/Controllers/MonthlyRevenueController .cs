@@ -10,18 +10,16 @@ namespace ListedCompany.Controllers;
 [ApiController]
 public class MonthlyRevenueController : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork;
 
-    public MonthlyRevenueController(IUnitOfWork unitOfWork)
+    public MonthlyRevenueController()
     {
-        _unitOfWork = unitOfWork;
     }
 
     [HttpGet]
     public IEnumerable<MonRevenueViewModel> Get()
     {
-
-        return;
+        var result = new List<MonRevenueViewModel>();
+        return result;
     }
 
     

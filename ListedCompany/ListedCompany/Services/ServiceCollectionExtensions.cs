@@ -3,7 +3,7 @@
 namespace ListedCompany.Services;
 
 /// <summary>
-/// Services
+/// 擴展ServiceCollection，註冊所有的Service
 /// </summary>
 public static class ServiceCollectionExtensions
 {

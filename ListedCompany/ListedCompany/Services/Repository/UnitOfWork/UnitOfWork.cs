@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ListedCompany.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Collections.Concurrent;
 
@@ -9,7 +10,7 @@ namespace ListedCompany.Services.Repository.UnitOfWork;
 /// </summary>
 public class UnitOfWork : IUnitOfWork
 {
-    private readonly DbContext _context;
+    private readonly db_aaa9ad_project20240703Context _context;
     private readonly IServiceProvider _serviceProvider;
     private bool _disposed;
     private ConcurrentDictionary<string, object> _repositories;
@@ -19,7 +20,7 @@ public class UnitOfWork : IUnitOfWork
     /// </summary>
     /// <param name="context">設定UOF的context</param>
     /// <param name="serviceProvider">ServiceProvider 用來解析Repository實例</param>
-    public UnitOfWork(DbContext context, IServiceProvider serviceProvider)
+    public UnitOfWork(db_aaa9ad_project20240703Context context, IServiceProvider serviceProvider)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
@@ -78,17 +79,17 @@ public class UnitOfWork : IUnitOfWork
     {
         var typeName = typeof(T).Name;
 
-        if (!_repositories.ContainsKey(typeName))
+        var repositoryInstance = _repositories.GetOrAdd(typeName, _ =>
         {
-            var repositoryInstance = _serviceProvider.GetService(typeof(IGenericRepository<T>));
-            if (repositoryInstance == null)
+            var repo = _serviceProvider.GetService(typeof(IGenericRepository<T>));
+            if (repo == null)
             {
                 var repositoryType = typeof(GenericRepository<>).MakeGenericType(typeof(T));
-                repositoryInstance = Activator.CreateInstance(repositoryType, _context, _serviceProvider);
+                repo = Activator.CreateInstance(repositoryType, _context, _serviceProvider);
             }
-            _repositories.TryAdd(typeName, repositoryInstance);
-        }
+            return repo;
+        });
 
-        return (IGenericRepository<T>)_repositories[typeName];
+        return (IGenericRepository<T>)repositoryInstance;
     }
 }

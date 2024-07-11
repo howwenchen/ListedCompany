@@ -40,6 +40,22 @@ public interface IGenericRepository<TEntity> where TEntity : class
     Task UpdateAsync(TEntity entity);
 
     /// <summary>
+    /// 執行自訂SQL語法並回傳資料
+    /// </summary>
+    /// <typeparam name="T">回傳資料的型別</typeparam>
+    /// <param name="sql">自訂SQL語法</param>
+    /// <param name="parameters">SQL語法的參數</param>
+    /// <returns>SQL語法執行結果</returns>
+    Task<IEnumerable<T>> ExecuteQuery<T>(string sql, object parameters = null);
+
+    /// <summary>
+    /// 執行不回傳資料的自訂SQL語法
+    /// </summary>
+    /// <param name="sql">自訂SQL語法</param>
+    /// <param name="parameters">SQL參數</param>
+    /// <returns>Task</returns>
+    Task ExecuteNonQuery(string sql, object parameters = null);
+    /// <summary>
     /// 執行預存程序並回傳資料。
     /// </summary>
     /// <typeparam name="T">回傳資料的型別</typeparam>

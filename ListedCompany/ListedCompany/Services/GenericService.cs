@@ -1,11 +1,12 @@
 ﻿using System.Linq.Expressions;
 using AutoMapper;
+using ListedCompany.Services.IService;
 using ListedCompany.Services.Repository.UnitOfWork;
 
 namespace ListedCompany.Services;
 
 /// <summary>
-/// 通用行的Service layer實作
+/// 通用型的Service layer實作
 /// </summary>
 /// <typeparam name="T">主要的Entity形態</typeparam>
 public class GenericService<T> : IService<T> where T : class

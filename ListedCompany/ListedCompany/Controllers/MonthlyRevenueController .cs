@@ -1,32 +1,36 @@
-﻿using ListedCompany.Services.Repository.UnitOfWork;
+﻿using ListedCompany.Services.IService;
 using ListedCompany.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Linq.Expressions;
 
 namespace ListedCompany.Controllers;
-
 
 [Route("[controller]/[action]")]
 [ApiController]
 public class MonthlyRevenueController : ControllerBase
 {
+    private readonly IMonthlyRevenueService _monthlyRevenueService;
 
-    public MonthlyRevenueController()
+    public MonthlyRevenueController(IMonthlyRevenueService monthlyRevenueService)
     {
+        _monthlyRevenueService = monthlyRevenueService;
     }
 
     [HttpGet]
-    public IEnumerable<MonRevenueViewModel> Get()
+    public async Task<ActionResult<IEnumerable<MonRevenueViewModel>>> Get()
     {
-        var result = new List<MonRevenueViewModel>();
-        return result;
+        var result = await _monthlyRevenueService.QueryMonthlyRevenuesAsync();
+
+        return result.ToList();
     }
 
     
-    [HttpGet("{id}")]
-    public string Get(int id)
+    [HttpGet("Filter")]
+    public async Task<ActionResult<IEnumerable<MonRevenueViewModel>>> GetFilter(string companyId)
     {
-        return "value";
+        var result = await _monthlyRevenueService.QueryMonthlyRevenuesFilterAsync(companyId);
+
+        return result.ToList();
     }
 
     

@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq.Expressions;
 using Dapper;
 using ListedCompany.Services.DatabaseHelper;
+using ListedCompany.Models;
 
 namespace ListedCompany.Services.Repository;
 
@@ -12,7 +13,7 @@ namespace ListedCompany.Services.Repository;
 /// <typeparam name="TEntity">The type of the entity.</typeparam>
 public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
 {
-    private readonly DbContext _context;
+    private readonly db_aaa9ad_project20240703Context _context;
     private readonly IDatabaseHelper _databaseHelper;
 
     /// <summary>
@@ -20,7 +21,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     /// </summary>
     /// <param name="context">The DbContext instance.</param>
     /// <param name="databaseHelper">The database helper instance.</param>
-    public GenericRepository(DbContext context, IDatabaseHelper databaseHelper)
+    public GenericRepository(db_aaa9ad_project20240703Context context, IDatabaseHelper databaseHelper)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _databaseHelper = databaseHelper ?? throw new ArgumentNullException(nameof(databaseHelper));
@@ -55,7 +56,6 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
         }
         return await _context.Set<TEntity>().Where(predicate).ToListAsync();
     }
-
 
     /// <summary>
     /// 取得單筆
@@ -100,7 +100,36 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     }
 
     /// <summary>
-    /// 執行預存程序並回傳資料。
+    /// 執行自訂SQL語法並回傳資料
+    /// </summary>
+    /// <typeparam name="T">回傳資料的型別</typeparam>
+    /// <param name="sql">自訂SQL語法</param>
+    /// <param name="parameters">SQL語法的參數</param>
+    /// <returns>SQL語法執行結果</returns>
+    public async Task<IEnumerable<T>> ExecuteQuery<T>(string sql, object parameters = null)
+    {
+        using (var connection = _databaseHelper.GetConnection())
+        {
+            return await connection.QueryAsync<T>(sql, parameters);
+        }
+    }
+
+    /// <summary>
+    /// 執行不回傳資料的自訂SQL語法
+    /// </summary>
+    /// <param name="sql">自訂SQL語法</param>
+    /// <param name="parameters">SQL參數</param>
+    /// <returns>Task</returns>
+    public async Task ExecuteNonQuery(string sql, object parameters = null)
+    {
+        using (var connection = _databaseHelper.GetConnection())
+        {
+            await connection.ExecuteAsync(sql, parameters);
+        }
+    }
+
+    /// <summary>
+    /// 執行預存程序並回傳資料
     /// </summary>
     /// <typeparam name="T">回傳資料的型別</typeparam>
     /// <param name="storedProcedure">預存程序名稱</param>
@@ -110,12 +139,12 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     {
         using (var connection = _databaseHelper.GetConnection())
         {
-            return await connection.QueryAsync<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
+            return await connection.QueryAsync<T>(storedProcedure, parameters ?? new { }, commandType: CommandType.StoredProcedure);
         }
     }
 
     /// <summary>
-    /// 執行不回傳資料的預存程序。
+    /// 執行不回傳資料的預存程序
     /// </summary>
     /// <param name="storedProcedure">預存程序名稱</param>
     /// <param name="parameters">預存程序參數</param>
@@ -124,7 +153,8 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     {
         using (var connection = _databaseHelper.GetConnection())
         {
-            await connection.ExecuteAsync(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
+            await connection.ExecuteAsync(storedProcedure, parameters ?? new { }, commandType: CommandType.StoredProcedure);
         }
     }
+
 }

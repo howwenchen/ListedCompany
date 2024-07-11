@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using ListedCompany.Services.IService;
 
 namespace ListedCompany.Services;
 
@@ -10,7 +11,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAllServices(this IServiceCollection services, Assembly assembly)
     {
         var serviceTypes = assembly.GetExportedTypes()
-            .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IService<>)))
+            .Where(t => t.GetInterfaces().Any(i => i.IsGenericType 
+            && i.GetGenericTypeDefinition() == typeof(IService<>)) 
+            && !t.IsGenericTypeDefinition)
             .ToList();
 
         foreach (var serviceType in serviceTypes)

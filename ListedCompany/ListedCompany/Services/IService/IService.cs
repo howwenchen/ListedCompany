@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace ListedCompany.Services;
+namespace ListedCompany.Services.IService;
 
 /// <summary>
 /// Service服務層內容的Interface

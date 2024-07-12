@@ -37,8 +37,7 @@ namespace ListedCompany
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             // 使用擴展方法動態註冊所有Service
-            builder.Services.AddScoped<IMonthlyRevenueService, MonthlyRevenueService>();
-            //builder.Services.AddAllServices(Assembly.GetExecutingAssembly());
+            builder.Services.AddAllServices(Assembly.GetExecutingAssembly());
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();

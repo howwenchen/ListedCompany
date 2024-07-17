@@ -39,6 +39,17 @@ namespace ListedCompany
             // 使用擴展方法動態註冊所有Service
             builder.Services.AddAllServices(Assembly.GetExecutingAssembly());
 
+
+            // 註冊 CORS 服務
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigin",
+                    builder => builder
+                        .AllowAnyOrigin() 
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -51,6 +62,9 @@ namespace ListedCompany
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            // 啟用 CORS
+            app.UseCors("AllowAllOrigin");
 
             // 啟用靜態檔案的存取
             app.UseDefaultFiles();

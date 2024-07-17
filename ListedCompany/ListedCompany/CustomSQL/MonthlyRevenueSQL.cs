@@ -9,12 +9,10 @@ public class MonthlyRevenueSQL
         var command = new StringBuilder();
 
         command.Append($@"
-SELECT a.CompanyID, a.ReportDate, a.DataYearMonth, a.RevenueCurrentMonth, 
-a.RevenuePreviousMonth, a.RevenueSameMonthLastYear, a.RevenueChangePreviousMonth,
-a.RevenueChangeSameMonthLastYear, a.CumulativeRevenueCurrentMonth, a.CumulativeRevenueLastYear,
-a.CumulativeRevenueChangePreviousPeriod, a.Notes, b.CompanyName, b.Industry 
+SELECT a.CompanyID,b.CompanyName, b.Industry , a.RevenueCurrentMonth, 
+a.RevenuePreviousMonth, a.RevenueChangePreviousMonth
 FROM MON_REVENUE a
-JOIN COMPANY_DATA b ON a.CompanyID = b.CompanyID
+INNER JOIN COMPANY_DATA b ON a.CompanyID = b.CompanyID
 WHERE a.CompanyID = @CompanyID
 ");
 

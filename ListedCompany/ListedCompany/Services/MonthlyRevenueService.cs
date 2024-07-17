@@ -83,7 +83,9 @@ public class MonthlyRevenueService : GenericService<MonRevenue>, IMonthlyRevenue
             catch
             {
                 await transaction.RollbackAsync();
+                return false;
                 throw;
+                
             }
         }
     }

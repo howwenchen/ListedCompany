@@ -1,7 +1,6 @@
 ﻿using ListedCompany.Services.IService;
 using ListedCompany.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq.Expressions;
 
 namespace ListedCompany.Controllers;
 
@@ -25,29 +24,21 @@ public class MonthlyRevenueController : ControllerBase
     }
 
     
-    [HttpGet("Filter")]
-    public async Task<ActionResult<IEnumerable<MonRevenueViewModel>>> GetFilter(string companyId)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<MonRevenueViewModel>>> GetFilter([FromQuery]string companyId)
     {
         var result = await _monthlyRevenueService.QueryMonthlyRevenuesFilterAsync(companyId);
-
+        
         return result.ToList();
     }
 
     
     [HttpPost]
-    public void Post([FromBody] string value)
+    public async Task<bool> Post([FromBody] MonRevenueViewModel revenueViewModel)
     {
+        var result = await _monthlyRevenueService.AddMonthlyRevenueAsync(revenueViewModel);
+
+        return result;
     }
 
-    
-    [HttpPatch]
-    public void Patch(int id, [FromBody] string value)
-    {
-    }
-
-    
-    [HttpDelete]
-    public void Delete(int id)
-    {
-    }
 }
